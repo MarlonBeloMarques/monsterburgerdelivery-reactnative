@@ -44,16 +44,16 @@ Button.defaultProps = {
 
 const styles = StyleSheet.create({
   button: {
-    height: theme.sizes.base * 3,
+    height: theme.sizes.base * 3.3,
     justifyContent: 'center',
     marginVertical: theme.sizes.padding / 3,
     marginTop: theme.sizes.base / 2,
   },
   shadow: {
     shadowColor: theme.colors.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.5,
-    shadowRadius: 10,
+    shadowRadius: 5,
     elevation: 3, // for android devices
   },
   primary: { backgroundColor: theme.colors.primary },

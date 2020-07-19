@@ -99,6 +99,7 @@ export default function Block(props) {
 
   const {
     flex,
+    index,
     row,
     column,
     center,
@@ -117,6 +118,7 @@ export default function Block(props) {
     wrap,
     style,
     border,
+    absolute,
     fullBorder,
     children,
   } = props;
@@ -124,6 +126,8 @@ export default function Block(props) {
   const blockStyles = [
     styles.block,
     size && { height: size },
+    absolute && { position: absolute },
+    index && { zIndex: index },
     border && styles.border,
     fullBorder && styles.fullBorder,
     flex && { flex },

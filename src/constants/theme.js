@@ -6,17 +6,18 @@ const colors = {
   gray: '#DEDEDE',
   brown: '#624D0E',
   yellow: '#F9E8C1',
+  accent: '#F3534A',
 };
 
 const sizes = {
   // global sizes
   base: 16,
   font: 14,
-  radius: 6,
+  radius: 12,
   padding: 25,
 
   // font sizes
-  h1: 26,
+  h1: 42,
   h2: 20,
   h3: 18,
   title: 18,

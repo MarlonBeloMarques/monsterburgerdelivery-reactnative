@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   // default style
   text: {
     fontSize: theme.sizes.font,
-    color: theme.colors.black,
+    color: theme.colors.secondary,
     fontFamily: 'Roboto-Regular',
   },
   // variations

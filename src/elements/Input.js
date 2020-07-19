@@ -15,9 +15,18 @@ export default function Input(props) {
     const { label, error } = props;
 
     return (
-      <Block padding={[0, 0, theme.sizes.base - 10, 4]} flex={false}>
+      <Block
+        style={{
+          bottom: theme.sizes.base * 2.6,
+          backgroundColor: theme.colors.white,
+        }}
+        index={2}
+        absolute
+        padding={[0, 6, 0, 6]}
+        margin={[0, 0, 0, theme.sizes.base]}
+      >
         {label ? (
-          <Text gray={!error} accent={error}>
+          <Text secondary={!error} accent={error}>
             {label}
           </Text>
         ) : null}
@@ -38,7 +47,7 @@ export default function Input(props) {
       >
         {rightLabel || (
           <Icon
-            color={theme.colors.white}
+            color={theme.colors.secondary}
             size={theme.sizes.font * 1.35}
             name={!toggleSecure ? 'md-eye' : 'md-eye-off'}
           />
@@ -83,7 +92,7 @@ export default function Input(props) {
   const inputStyles = [
     box
       ? { height, paddingTop: 12, paddingBottom: 12 }
-      : { height: theme.sizes.base * 3 },
+      : { height: theme.sizes.base * 3.1 },
     styles.input,
     error && { borderColor: theme.colors.tertiary },
     style,
@@ -128,11 +137,11 @@ export default function Input(props) {
 
 const styles = StyleSheet.create({
   input: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: theme.colors.tertiary,
+    borderWidth: 1,
+    borderColor: theme.colors.secondary,
     borderRadius: theme.sizes.radius,
     fontSize: theme.sizes.font,
-    color: theme.colors.white,
+    color: theme.colors.secondary,
     paddingLeft: theme.sizes.base - 6,
     paddingRight: theme.sizes.base - 6,
   },
@@ -141,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     width: theme.sizes.base * 2,
     height: theme.sizes.base * 2,
-    top: theme.sizes.base * 2.4,
+    top: theme.sizes.base,
     paddingRight: theme.sizes.base - 6,
     right: 0,
   },
