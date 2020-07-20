@@ -11,6 +11,10 @@ export default function LoginScreen({ navigation }) {
 
   const passwordRef = useRef();
 
+  function onClickRegister() {
+    navigation.navigate('Register');
+  }
+
   function handleSubmit() {
     navigation.navigate('welcome');
   }
@@ -68,10 +72,12 @@ export default function LoginScreen({ navigation }) {
           </Text>
         </Button>
         <Block margin={[theme.sizes.base, 0]} center flex={false}>
-          <Block row flex={false}>
-            <Text>Don't have on account?</Text>
-            <Text bold>Register</Text>
-          </Block>
+          <Button style onPress={onClickRegister}>
+            <Block row flex={false}>
+              <Text>Don't have on account?</Text>
+              <Text bold>Register</Text>
+            </Block>
+          </Button>
         </Block>
       </Block>
     </Block>
