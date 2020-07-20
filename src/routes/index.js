@@ -5,6 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Platform } from 'react-native';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
+
 import { theme } from '../constants';
 import { Photo } from '../elements';
 
@@ -40,6 +42,7 @@ export default function Navigator() {
       >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

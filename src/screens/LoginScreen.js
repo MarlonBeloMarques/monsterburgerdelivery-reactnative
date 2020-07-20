@@ -14,6 +14,9 @@ export default function LoginScreen({ navigation }) {
   function onClickRegister() {
     navigation.navigate('Register');
   }
+  function onClickForgetPassword() {
+    navigation.navigate('ForgetPassword');
+  }
 
   function handleSubmit() {
     navigation.navigate('welcome');
@@ -61,7 +64,7 @@ export default function LoginScreen({ navigation }) {
             submitEditing={handleSubmit}
           />
           <Block padding={[0, 5, 0, 0]} bottom row flex={false}>
-            <Button style>
+            <Button onPress={onClickForgetPassword} style>
               <Text>Forget Password?</Text>
             </Button>
           </Block>
