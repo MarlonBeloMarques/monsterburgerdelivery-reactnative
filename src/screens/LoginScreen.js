@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }) {
   }
 
   function handleSubmit() {
-    navigation.navigate('welcome');
+    navigation.navigate('Navigation');
   }
 
   return (
