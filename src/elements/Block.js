@@ -109,7 +109,8 @@ export default function Block(props) {
     top,
     bottom,
     card,
-    size,
+    width,
+    height,
     shadow,
     color,
     space,
@@ -125,7 +126,8 @@ export default function Block(props) {
 
   const blockStyles = [
     styles.block,
-    size && { height: size },
+    width && { width },
+    height && { height },
     absolute && { position: absolute },
     index && { zIndex: index },
     border && styles.border,
