@@ -33,7 +33,10 @@ export default function Navigator() {
                 style={{ width: 26, height: 26, marginRight: 5 }}
               />
             ),
-            headerTransparent: true,
+            headerStyle: {
+              shadowColor: 'transparent',
+              elevation: 0,
+            },
             headerBackTitleVisible: null,
             title: null,
             headerLeftContainerStyle: {

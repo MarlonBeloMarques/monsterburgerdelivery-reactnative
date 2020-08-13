@@ -2,19 +2,33 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-use-before-define */
 import React from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, Animated } from 'react-native';
 import PropTypes from 'prop-types';
 
 export default function Photo(props) {
-  const { size, size2, style, content, avatar } = props;
+  const { width, height, style, content, avatar, animated, absolute } = props;
 
   const blockStyles = [
-    content === true && { width: size },
+    content === true && { width },
     // eslint-disable-next-line no-use-before-define
-    size && size2 && { width: size, height: size2 },
+    width && height && { width, height },
     avatar && styles.avatar,
     style, // reescrever estilos predefinidos
   ];
+
+  if (animated) {
+    return (
+      <Animated.Image
+        {...props}
+        style={
+          (absolute === true ? StyleSheet.absoluteFill : null, blockStyles)
+        }
+        source={
+          typeof props.image === 'string' ? { uri: props.image } : props.image
+        }
+      />
+    );
+  }
 
   return (
     <Image

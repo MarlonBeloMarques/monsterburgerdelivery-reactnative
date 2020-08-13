@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-use-before-define */
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Animated } from 'react-native';
 import { theme } from '../constants';
 
 export default function Block(props) {
@@ -122,6 +122,8 @@ export default function Block(props) {
     absolute,
     fullBorder,
     children,
+    animated,
+    key,
   } = props;
 
   const blockStyles = [
@@ -153,7 +155,25 @@ export default function Block(props) {
     style, // reescrever estilos predefinidos
   ];
 
-  return <View style={blockStyles}>{children}</View>;
+  if (animated) {
+    return (
+      <Animated.View
+        key={key}
+        style={[
+          absolute === true ? StyleSheet.absoluteFill : null,
+          blockStyles,
+        ]}
+      >
+        {children}
+      </Animated.View>
+    );
+  }
+
+  return (
+    <View key={key} style={blockStyles}>
+      {children}
+    </View>
+  );
 }
 
 export const styles = StyleSheet.create({
