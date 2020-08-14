@@ -4,6 +4,7 @@ import { Block, Text, Photo, Button } from '../elements';
 import { theme } from '../constants';
 import { data } from '../utils';
 import { CheckBoxBurger } from '../components';
+import CheckBoxIngredients from '../components/CheckBoxIngredients';
 
 export default function OrderManually() {
   const flatListRef = useRef();
@@ -158,7 +159,7 @@ export default function OrderManually() {
               <Block
                 flex={false}
                 width={Dimensions.get('window').width / 2}
-                height={Dimensions.get('window').height / 2}
+                height={Dimensions.get('window').height / 2.8}
               >
                 <Block
                   flex={false}
@@ -224,6 +225,24 @@ export default function OrderManually() {
           onScroll={({ nativeEvent }) => checkScroll(nativeEvent)}
         />
       </Block>
+      <Block
+        absolute
+        row
+        middle
+        flex={false}
+        style={{
+          alignSelf: 'center',
+          top: Dimensions.get('window').height / 1.9,
+        }}
+      >
+        <Text h1 primary center middle bold>
+          {burgers[indexToAnimated].price}
+        </Text>
+        <Text h2 primary center middle bold>
+          {'  '}R$
+        </Text>
+      </Block>
+      <CheckBoxIngredients ingredients={data.ingredients} />
     </Block>
   );
 }
