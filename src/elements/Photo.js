@@ -6,7 +6,16 @@ import { StyleSheet, Image, Animated } from 'react-native';
 import PropTypes from 'prop-types';
 
 export default function Photo(props) {
-  const { width, height, style, content, avatar, animated, absolute } = props;
+  const {
+    width,
+    height,
+    style,
+    content,
+    avatar,
+    animated,
+    absolute,
+    onLayout,
+  } = props;
 
   const blockStyles = [
     content === true && { width },
@@ -26,6 +35,7 @@ export default function Photo(props) {
         source={
           typeof props.image === 'string' ? { uri: props.image } : props.image
         }
+        onLayout={onLayout}
       />
     );
   }
@@ -37,6 +47,7 @@ export default function Photo(props) {
       source={
         typeof props.image === 'string' ? { uri: props.image } : props.image
       }
+      onLayout={onLayout}
     />
   );
 }

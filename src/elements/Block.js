@@ -124,6 +124,7 @@ export default function Block(props) {
     children,
     animated,
     key,
+    onLayout,
   } = props;
 
   const blockStyles = [
@@ -163,6 +164,7 @@ export default function Block(props) {
           absolute === true ? StyleSheet.absoluteFill : null,
           blockStyles,
         ]}
+        onLayout={onLayout}
       >
         {children}
       </Animated.View>
@@ -170,7 +172,7 @@ export default function Block(props) {
   }
 
   return (
-    <View key={key} style={blockStyles}>
+    <View key={key} style={blockStyles} onLayout={onLayout}>
       {children}
     </View>
   );

@@ -13,6 +13,7 @@ export default function Button(props) {
     children,
     radius,
     disableRadiusDefault,
+    onLayout,
   } = props;
 
   const buttonStyles = [
@@ -30,6 +31,7 @@ export default function Button(props) {
     <TouchableOpacity
       style={buttonStyles}
       activeOpacity={opacity || 0.8}
+      onLayout={onLayout}
       {...props}
     >
       {children}

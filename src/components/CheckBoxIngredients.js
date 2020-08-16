@@ -3,7 +3,8 @@ import { Block, Button, Text, Photo } from '../elements';
 import { theme } from '../constants';
 
 export default function CheckBoxIngredients({ ingredients }) {
-  const [value, setValue] = useState(1);
+  const [value, setValue] = useState(0);
+  const [clicked, setClicked] = useState(0);
 
   return (
     <Block flex={false}>
@@ -18,7 +19,31 @@ export default function CheckBoxIngredients({ ingredients }) {
       <Block row middle flex={false} space="between">
         {ingredients.map((item) => {
           return (
-            <Button style onPress={() => setValue(item.key)}>
+            <Button
+              style
+              onPress={() => {
+                setValue(item.key);
+                setClicked(item.key);
+              }}
+            >
+              {clicked === item.key && (
+                <Block
+                  flex={false}
+                  absolute
+                  index={10}
+                  style={{ alignSelf: 'center' }}
+                >
+                  <Photo
+                    image={item.image}
+                    width={60}
+                    content
+                    resizeMode="contain"
+                    onLayout={(event) => {
+                      const { x, y, height, width } = event.nativeEvent.layout;
+                    }}
+                  />
+                </Block>
+              )}
               <Block
                 column
                 margin={[

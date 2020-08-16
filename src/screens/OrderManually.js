@@ -157,6 +157,7 @@ export default function OrderManually() {
           renderItem={({ item, index }) => (
             <Button style onPress={() => scrollToIndex(item, index)}>
               <Block
+                fullBorder
                 flex={false}
                 width={Dimensions.get('window').width / 2}
                 height={Dimensions.get('window').height / 2.8}
@@ -198,6 +199,14 @@ export default function OrderManually() {
                       content
                       resizeMode="contain"
                       image={item.image_content}
+                      onLayout={(event) => {
+                        const {
+                          x,
+                          y,
+                          height,
+                          width,
+                        } = event.nativeEvent.layout;
+                      }}
                     />
                   </Block>
                   <Block
