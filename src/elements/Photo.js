@@ -15,9 +15,11 @@ export default function Photo(props) {
     animated,
     absolute,
     onLayout,
+    reference,
   } = props;
 
   const blockStyles = [
+    absolute && { position: 'absolute' },
     content === true && { width },
     // eslint-disable-next-line no-use-before-define
     width && height && { width, height },
@@ -29,9 +31,11 @@ export default function Photo(props) {
     return (
       <Animated.Image
         {...props}
-        style={
-          (absolute === true ? StyleSheet.absoluteFill : null, blockStyles)
-        }
+        ref={reference}
+        style={[
+          absolute === true ? StyleSheet.absoluteFill : null,
+          blockStyles,
+        ]}
         source={
           typeof props.image === 'string' ? { uri: props.image } : props.image
         }
@@ -44,6 +48,7 @@ export default function Photo(props) {
     <Image
       {...props}
       style={blockStyles}
+      ref={reference}
       source={
         typeof props.image === 'string' ? { uri: props.image } : props.image
       }

@@ -103,4 +103,10 @@ const ingredients = [
   },
 ];
 
+export function findKey(key) {
+  return ingredients.filter((item) => {
+    return item.key === key;
+  });
+}
+
 export { burgers, sizes, ingredients };

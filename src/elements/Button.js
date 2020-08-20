@@ -14,6 +14,7 @@ export default function Button(props) {
     radius,
     disableRadiusDefault,
     onLayout,
+    reference,
   } = props;
 
   const buttonStyles = [
@@ -29,6 +30,7 @@ export default function Button(props) {
 
   return (
     <TouchableOpacity
+      ref={reference}
       style={buttonStyles}
       activeOpacity={opacity || 0.8}
       onLayout={onLayout}

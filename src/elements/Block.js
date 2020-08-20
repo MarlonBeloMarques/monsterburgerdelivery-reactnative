@@ -125,13 +125,14 @@ export default function Block(props) {
     animated,
     key,
     onLayout,
+    reference,
   } = props;
 
   const blockStyles = [
     styles.block,
     width && { width },
     height && { height },
-    absolute && { position: absolute },
+    absolute && { position: 'absolute' },
     index && { zIndex: index },
     border && styles.border,
     fullBorder && styles.fullBorder,
@@ -159,6 +160,7 @@ export default function Block(props) {
   if (animated) {
     return (
       <Animated.View
+        ref={reference}
         key={key}
         style={[
           absolute === true ? StyleSheet.absoluteFill : null,
@@ -172,7 +174,7 @@ export default function Block(props) {
   }
 
   return (
-    <View key={key} style={blockStyles} onLayout={onLayout}>
+    <View ref={reference} key={key} style={blockStyles} onLayout={onLayout}>
       {children}
     </View>
   );

@@ -1,26 +1,43 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FlatList, Dimensions, Animated } from 'react-native';
-import { Block, Text, Photo, Button } from '../elements';
+import { useHeaderHeight } from '@react-navigation/stack';
+import { Block, Text, Photo } from '../elements';
 import { theme } from '../constants';
 import { data } from '../utils';
-import { CheckBoxBurger } from '../components';
+import { CheckBoxBurger, Burger } from '../components';
 import CheckBoxIngredients from '../components/CheckBoxIngredients';
+
+const maxWidth = Dimensions.get('window').width;
 
 export default function OrderManually() {
   const flatListRef = useRef();
+  const headerHeight = useHeaderHeight();
 
   const [burgers, setBurgers] = useState(data.burgers);
   const [indexToAnimated, setIndexToAnimated] = useState(0);
 
+  const [sourceIngredient, setSourceIngredient] = useState({});
+  const [destineIngredient, setDestineIngredient] = useState({});
+  const [openMeasurements, setOpenMeasurements] = useState({});
+
   const [start, setStart] = useState(false);
   const [end, setEnd] = useState(false);
   const [top, setTop] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
 
   const [leftContent, setLeftContent] = useState(new Animated.Value(0));
   const [rightContent, setRightContent] = useState(new Animated.Value(0));
   const [topBreadBurger, setTopBreadBurger] = useState(new Animated.Value(0));
   const [bottomBurger, setBottomBurger] = useState(new Animated.Value(0));
   const [widthBurger, setWidthBurger] = useState(new Animated.Value(100));
+
+  const [openingInitScale, setOpeningInitScale] = useState(0);
+  const [openingInitTranslateY, setOpeningInitTranslateY] = useState(0);
+  const [openingInitTranslateX, setOpeningInitTranslateX] = useState(0);
+
+  const [openProgress, setOpenProgress] = useState(new Animated.Value(0));
+
+  const [ingredientId, setIngredientId] = useState(0);
 
   const scrollToIndex = (item, index) => {
     flatListRef.current.scrollToIndex({
@@ -37,7 +54,6 @@ export default function OrderManually() {
 
     setIndexToAnimated(index);
     setTop(true);
-
     setTimeout(() => {
       setTop(false);
     }, 100);
@@ -104,6 +120,55 @@ export default function OrderManually() {
     }, 100);
   }, []);
 
+  useEffect(() => {
+    setAnimationComplete(false);
+    if (Object.entries(sourceIngredient).length !== 0) {
+      Animated.timing(openProgress, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setAnimationComplete(true);
+        setOpenMeasurements({});
+        setSourceIngredient({});
+        openProgress.setValue(0);
+      });
+
+      setOpenMeasurements({
+        sourceX: sourceIngredient.x,
+        sourceY: sourceIngredient.y - headerHeight,
+        sourceWidth: sourceIngredient.width,
+        sourceHeight: sourceIngredient.height,
+        destX: destineIngredient.x,
+        destY:
+          destineIngredient.y - (headerHeight + destineIngredient.height + 8),
+        destWidth: destineIngredient.width * 1.2,
+        destHeight: destineIngredient.height,
+      });
+    }
+  }, [ingredientId, destineIngredient]);
+
+  useEffect(() => {
+    const aspectRatio = destineIngredient.width / destineIngredient.height;
+
+    if (Object.entries(openMeasurements).length !== 0) {
+      const maxDim = openMeasurements.destHeight;
+      const srcShortDim = openMeasurements.sourceWidth;
+      const srcMaxDim = srcShortDim / aspectRatio;
+      setOpeningInitScale(srcMaxDim / maxDim);
+      const translateInitY =
+        openMeasurements.sourceY + openMeasurements.sourceHeight / 2;
+      const translateDestY =
+        openMeasurements.destY + openMeasurements.destHeight / 2;
+      setOpeningInitTranslateY(translateInitY - translateDestY);
+      const translateInitX =
+        openMeasurements.sourceX + openMeasurements.sourceWidth / 2;
+      const translateDestX =
+        openMeasurements.destX + openMeasurements.destWidth / 2;
+      setOpeningInitTranslateX(translateInitX - translateDestX);
+    }
+  }, [openMeasurements]);
+
   const checkScroll = ({ layoutMeasurement, contentOffset, contentSize }) => {
     if (contentOffset.x <= 20) {
       setStart(true);
@@ -155,81 +220,16 @@ export default function OrderManually() {
           snapToInterval={Dimensions.get('window').width / 2}
           keyExtractor={(item) => String(item.key)}
           renderItem={({ item, index }) => (
-            <Button style onPress={() => scrollToIndex(item, index)}>
-              <Block
-                fullBorder
-                flex={false}
-                width={Dimensions.get('window').width / 2}
-                height={Dimensions.get('window').height / 2.8}
-              >
-                <Block
-                  flex={false}
-                  animated
-                  absolute
-                  style={{
-                    bottom: index === indexToAnimated ? bottomBurger : 0,
-                  }}
-                >
-                  <Block
-                    key={index}
-                    flex={false}
-                    absolute
-                    animated
-                    index={3}
-                    center
-                    middle
-                    style={{
-                      top: index === indexToAnimated ? topBreadBurger : 0,
-                    }}
-                  >
-                    <Photo
-                      width={index === indexToAnimated ? widthBurger : 100}
-                      animated
-                      absolute
-                      content
-                      resizeMode="contain"
-                      image={item.image_burgerTop}
-                    />
-                  </Block>
-                  <Block flex={false} absolute animated index={2} center middle>
-                    <Photo
-                      width={index === indexToAnimated ? widthBurger : 100}
-                      animated
-                      absolute
-                      content
-                      resizeMode="contain"
-                      image={item.image_content}
-                      onLayout={(event) => {
-                        const {
-                          x,
-                          y,
-                          height,
-                          width,
-                        } = event.nativeEvent.layout;
-                      }}
-                    />
-                  </Block>
-                  <Block
-                    flex={false}
-                    absolute
-                    animated
-                    index={1}
-                    center
-                    middle
-                    style={{ top: 40 }}
-                  >
-                    <Photo
-                      width={index === indexToAnimated ? widthBurger : 100}
-                      animated
-                      absolute
-                      content
-                      resizeMode="contain"
-                      image={item.image_burgerBottom}
-                    />
-                  </Block>
-                </Block>
-              </Block>
-            </Button>
+            <Burger
+              scrollToIndex={scrollToIndex}
+              item={item}
+              index={index}
+              indexToAnimated={indexToAnimated}
+              bottomBurger={bottomBurger}
+              topBreadBurger={topBreadBurger}
+              widthBurger={widthBurger}
+              dimensionBurgerClicked={setDestineIngredient}
+            />
           )}
           onScroll={({ nativeEvent }) => checkScroll(nativeEvent)}
         />
@@ -251,7 +251,53 @@ export default function OrderManually() {
           {'  '}R$
         </Text>
       </Block>
-      <CheckBoxIngredients ingredients={data.ingredients} />
+      <CheckBoxIngredients
+        ingredients={data.ingredients}
+        response={({ sourceIngredientDimensions, ingredientId }) => {
+          setSourceIngredient(sourceIngredientDimensions);
+          setIngredientId(ingredientId);
+        }}
+      />
+      {Object.entries(openMeasurements).length !== 0 && !animationComplete && (
+        <Photo
+          style={{
+            zIndex: 3,
+            alignSelf: 'center',
+            width: openMeasurements.destWidth,
+            height: openMeasurements.destHeight,
+            top: openMeasurements.destY,
+            left: openMeasurements.destX,
+            opacity: openProgress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 1],
+            }),
+            transform: [
+              {
+                translateX: openProgress.interpolate({
+                  inputRange: [0.01, 0.99],
+                  outputRange: [openingInitTranslateX, 0],
+                }),
+              },
+              {
+                translateY: openProgress.interpolate({
+                  inputRange: [0.01, 0.99],
+                  outputRange: [openingInitTranslateY, 0],
+                }),
+              },
+              {
+                scale: openProgress.interpolate({
+                  inputRange: [0.01, 0.99],
+                  outputRange: [openingInitScale, 1],
+                }),
+              },
+            ],
+          }}
+          image={data.findKey(ingredientId)[0].image}
+          absolute
+          resizeMode="contain"
+          animated
+        />
+      )}
     </Block>
   );
 }
