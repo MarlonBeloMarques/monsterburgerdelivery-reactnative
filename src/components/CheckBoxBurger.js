@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Button, Block, Text } from '../elements';
 import { theme } from '../constants';
 
-export default function CheckBoxBurger({ sizes }) {
+export default function CheckBoxBurger({ sizes, response }) {
   const [value, setValue] = useState(1);
 
   return (
     <Block row middle flex={false}>
+      {response({ size: value })}
       {sizes.map((item) => {
         return (
           <Button style onPress={() => setValue(item.key)}>

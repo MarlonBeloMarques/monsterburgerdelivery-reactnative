@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { FlatList, Dimensions, Animated } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/stack';
-import Toast from 'react-native-tiny-toast';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Block, Text, Photo, Button } from '../elements';
 import { theme } from '../constants';
@@ -11,30 +10,12 @@ import CheckBoxIngredients from '../components/CheckBoxIngredients';
 
 const maxWidth = Dimensions.get('window').width;
 
-export const toastError = (msg) =>
-  Toast.show(msg, {
-    position: Toast.position.center,
-    containerStyle: {
-      backgroundColor: '#f00',
-      borderRadius: 15,
-    },
-    textStyle: {
-      color: '#fff',
-    },
-    imgStyle: {},
-    mask: false,
-    maskStyle: {},
-    duration: 2000,
-    animation: true,
-  });
-
 export default function OrderManually() {
   const flatListRef = useRef();
   const headerHeight = useHeaderHeight();
 
   const [burgers, setBurgers] = useState(data.burgers);
   const [initialSelect, setInitialSelect] = useState(true);
-  const [myMountedBurger, setMyMountedBurger] = useState(false);
   const [indexToAnimated, setIndexToAnimated] = useState(0);
 
   const [sourceIngredient, setSourceIngredient] = useState({});
@@ -62,10 +43,11 @@ export default function OrderManually() {
   );
 
   const [ingredientId, setIngredientId] = useState(0);
-
   const [ingredients, setIngredients] = useState([]);
-
   const [ingredientSelected, setIngredientSelected] = useState({});
+  const [myBurgers, setMyBurgers] = useState([]);
+  const [sizeBurger, setSizeBurger] = useState(null);
+  const [mountedBurger, setMountedBurger] = useState(false);
 
   const scrollToIndex = (item, index) => {
     flatListRef.current.scrollToIndex({
@@ -272,6 +254,7 @@ export default function OrderManually() {
   useEffect(() => {
     if (ingredients.length > 1) {
       MessageBurgerToast('assembled hamburger, add to cart!');
+      setMountedBurger(true);
     }
   }, [ingredients]);
 
@@ -306,6 +289,28 @@ export default function OrderManually() {
     [ingredientSelected]
   );
 
+  const addBurger = () => {
+    if (mountedBurger) {
+      setMountedBurger(false);
+      setMyBurgers([
+        ...myBurgers,
+        {
+          type: burgers[indexToAnimated].type,
+          size: sizeBurger,
+          ingredients,
+        },
+      ]);
+      setIngredients([]);
+      setInitialSelect({});
+    } else {
+      MessageBurgerToast(
+        'you can still add more ingredients to your hamburger!'
+      );
+    }
+  };
+
+  console.log(myBurgers);
+
   return (
     <Block color="white">
       <Block flex={false} padding={[theme.sizes.padding, theme.sizes.padding]}>
@@ -313,13 +318,28 @@ export default function OrderManually() {
           <Text bold secondary h3>
             Order Manually
           </Text>
-          <Block row bottom>
-            <Button style>
+          <Block bottom row>
+            <Button style onPress={() => addBurger()}>
               <FontAwesome5
                 name="cart-arrow-down"
                 size={20}
                 color={theme.colors.secondary}
               />
+              <Block
+                style={{ alignSelf: 'flex-end', top: 12, right: -6 }}
+                center
+                middle
+                absolute
+                flex={false}
+                width={18}
+                height={18}
+                color={theme.colors.accent}
+                card
+              >
+                <Text caption bold white>
+                  {myBurgers.length}
+                </Text>
+              </Block>
             </Button>
           </Block>
         </Block>
@@ -333,7 +353,12 @@ export default function OrderManually() {
             <Text white>{burgers[indexToAnimated].type}</Text>
           </Block>
         </Block>
-        <CheckBoxBurger sizes={data.sizes} />
+        <CheckBoxBurger
+          sizes={data.sizes}
+          response={({ size }) => {
+            setSizeBurger(size);
+          }}
+        />
       </Block>
       <Block
         flex={false}
