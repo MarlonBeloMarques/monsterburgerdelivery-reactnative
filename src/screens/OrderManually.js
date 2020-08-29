@@ -14,6 +14,7 @@ export default function OrderManually() {
   const headerHeight = useHeaderHeight();
 
   const [burgers, setBurgers] = useState(data.burgers);
+  const [initialSelect, setInitialSelect] = useState(true);
   const [indexToAnimated, setIndexToAnimated] = useState(0);
 
   const [sourceIngredient, setSourceIngredient] = useState({});
@@ -123,6 +124,7 @@ export default function OrderManually() {
 
   useEffect(() => {
     setTimeout(() => {
+      setInitialSelect(false);
       scrollToIndex(
         burgers[Math.abs(burgers.length / 2)],
         burgers.indexOf(burgers[Math.abs(burgers.length / 2)])
@@ -268,7 +270,6 @@ export default function OrderManually() {
             setSourceIngredient(sourceIngredientDimensions);
             setIngredientId(ingredientId);
           }
-          console.log('test');
         }}
       />
     );
@@ -327,9 +328,18 @@ export default function OrderManually() {
               topBreadBurger={topBreadBurger}
               widthBurger={widthBurger}
               dimensionBurgerClicked={setDestineIngredient}
+              response={({ dimensions }) => {
+                if (
+                  item.key === burgers[Math.abs(burgers.length / 2)].key &&
+                  initialSelect
+                ) {
+                  setDestineIngredient(dimensions);
+                }
+              }}
             />
           )}
           onScroll={({ nativeEvent }) => checkScroll(nativeEvent)}
+          scrollEnabled={false}
         />
       </Block>
       <Block

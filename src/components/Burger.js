@@ -11,6 +11,7 @@ export default function Burger({
   topBreadBurger,
   widthBurger,
   dimensionBurgerClicked,
+  response,
 }) {
   const elementRef = useRef();
   const [dimensions, setDimensions] = useState({
@@ -28,6 +29,7 @@ export default function Burger({
         dimensionBurgerClicked(dimensions);
       }}
     >
+      {response({ dimensions })}
       <Block
         center
         flex={false}
