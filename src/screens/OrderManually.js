@@ -36,8 +36,15 @@ export default function OrderManually() {
   const [openingInitTranslateX, setOpeningInitTranslateX] = useState(0);
 
   const [openProgress, setOpenProgress] = useState(new Animated.Value(0));
+  const [selectedProgress, setSelectedProgress] = useState(
+    new Animated.Value(0)
+  );
 
   const [ingredientId, setIngredientId] = useState(0);
+
+  const [ingredients, setIngredients] = useState([]);
+
+  const [ingredientSelected, setIngredientSelected] = useState({});
 
   const scrollToIndex = (item, index) => {
     flatListRef.current.scrollToIndex({
@@ -52,6 +59,8 @@ export default function OrderManually() {
       widthBurger.setValue(100);
     }
 
+    setIngredientSelected({});
+    selectedProgress.setValue(0);
     setIndexToAnimated(index);
     setTop(true);
     setTimeout(() => {
@@ -121,6 +130,7 @@ export default function OrderManually() {
   }, []);
 
   useEffect(() => {
+    setIngredientSelected({});
     setAnimationComplete(false);
     if (Object.entries(sourceIngredient).length !== 0) {
       Animated.timing(openProgress, {
@@ -146,7 +156,7 @@ export default function OrderManually() {
         destHeight: destineIngredient.height,
       });
     }
-  }, [ingredientId, destineIngredient]);
+  }, [ingredientId]);
 
   useEffect(() => {
     const aspectRatio = destineIngredient.width / destineIngredient.height;
@@ -166,6 +176,20 @@ export default function OrderManually() {
       const translateDestX =
         openMeasurements.destX + openMeasurements.destWidth / 2;
       setOpeningInitTranslateX(translateInitX - translateDestX);
+
+      Animated.timing(selectedProgress, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+
+      setIngredientSelected({
+        width: openMeasurements.destWidth,
+        height: openMeasurements.destHeight,
+        top: openMeasurements.destY,
+        left: openMeasurements.destX,
+        id: ingredientId,
+      });
     }
   }, [openMeasurements]);
 
@@ -258,10 +282,28 @@ export default function OrderManually() {
           setIngredientId(ingredientId);
         }}
       />
+      {Object.entries(ingredientSelected).length !== 0 && (
+        <Photo
+          width={ingredientSelected.width}
+          height={ingredientSelected.height}
+          animated
+          absolute
+          image={data.findKey(ingredientSelected.id)[0].image}
+          style={{
+            zIndex: 8,
+            top: ingredientSelected.top,
+            left: ingredientSelected.left,
+            opacity: selectedProgress.interpolate({
+              inputRange: [0, 0.99, 0.995],
+              outputRange: [0, 0, 1],
+            }),
+          }}
+        />
+      )}
       {Object.entries(openMeasurements).length !== 0 && !animationComplete && (
         <Photo
           style={{
-            zIndex: 3,
+            zIndex: 9,
             alignSelf: 'center',
             width: openMeasurements.destWidth,
             height: openMeasurements.destHeight,
