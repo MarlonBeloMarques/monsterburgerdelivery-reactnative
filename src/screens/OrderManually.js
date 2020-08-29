@@ -1,13 +1,31 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { FlatList, Dimensions, Animated } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/stack';
+import Toast from 'react-native-tiny-toast';
 import { Block, Text, Photo } from '../elements';
 import { theme } from '../constants';
 import { data } from '../utils';
-import { CheckBoxBurger, Burger } from '../components';
+import { CheckBoxBurger, Burger, MessageBurgerToast } from '../components';
 import CheckBoxIngredients from '../components/CheckBoxIngredients';
 
 const maxWidth = Dimensions.get('window').width;
+
+export const toastError = (msg) =>
+  Toast.show(msg, {
+    position: Toast.position.center,
+    containerStyle: {
+      backgroundColor: '#f00',
+      borderRadius: 15,
+    },
+    textStyle: {
+      color: '#fff',
+    },
+    imgStyle: {},
+    mask: false,
+    maskStyle: {},
+    duration: 2000,
+    animation: true,
+  });
 
 export default function OrderManually() {
   const flatListRef = useRef();
@@ -15,6 +33,7 @@ export default function OrderManually() {
 
   const [burgers, setBurgers] = useState(data.burgers);
   const [initialSelect, setInitialSelect] = useState(true);
+  const [myMountedBurger, setMyMountedBurger] = useState(false);
   const [indexToAnimated, setIndexToAnimated] = useState(0);
 
   const [sourceIngredient, setSourceIngredient] = useState({});
@@ -58,10 +77,10 @@ export default function OrderManually() {
       topBreadBurger.setValue(0);
       bottomBurger.setValue(0);
       widthBurger.setValue(100);
+      setIngredients([]);
     }
 
     setIngredientSelected({});
-    setIngredients([]);
     selectedProgress.setValue(0);
     setIndexToAnimated(index);
     setTop(true);
@@ -249,6 +268,12 @@ export default function OrderManually() {
     }
   }, [ingredientSelected]);
 
+  useEffect(() => {
+    if (ingredients.length > 2) {
+      MessageBurgerToast('mounted burger, drag to cart!');
+    }
+  }, [ingredients]);
+
   const checkScroll = ({ layoutMeasurement, contentOffset, contentSize }) => {
     if (contentOffset.x <= 20) {
       setStart(true);
@@ -336,6 +361,7 @@ export default function OrderManually() {
                   setDestineIngredient(dimensions);
                 }
               }}
+              ingredients={ingredients}
             />
           )}
           onScroll={({ nativeEvent }) => checkScroll(nativeEvent)}
