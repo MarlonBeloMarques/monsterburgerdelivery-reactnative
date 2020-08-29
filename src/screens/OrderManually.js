@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { FlatList, Dimensions, Animated } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { Block, Text, Photo } from '../elements';
@@ -60,6 +60,7 @@ export default function OrderManually() {
     }
 
     setIngredientSelected({});
+    setIngredients([]);
     selectedProgress.setValue(0);
     setIndexToAnimated(index);
     setTop(true);
@@ -144,17 +145,33 @@ export default function OrderManually() {
         openProgress.setValue(0);
       });
 
-      setOpenMeasurements({
-        sourceX: sourceIngredient.x,
-        sourceY: sourceIngredient.y - headerHeight,
-        sourceWidth: sourceIngredient.width,
-        sourceHeight: sourceIngredient.height,
-        destX: destineIngredient.x,
-        destY:
-          destineIngredient.y - (headerHeight + destineIngredient.height + 8),
-        destWidth: destineIngredient.width * 1.2,
-        destHeight: destineIngredient.height,
-      });
+      if (ingredients.length === 0) {
+        setOpenMeasurements({
+          sourceX: sourceIngredient.x,
+          sourceY: sourceIngredient.y - headerHeight,
+          sourceWidth: sourceIngredient.width,
+          sourceHeight: sourceIngredient.height,
+          destX: destineIngredient.x,
+          destY:
+            destineIngredient.y - (headerHeight + destineIngredient.height + 6),
+          destWidth: destineIngredient.width * 1.2,
+          destHeight: destineIngredient.height,
+        });
+      } else {
+        setOpenMeasurements({
+          sourceX: sourceIngredient.x,
+          sourceY: sourceIngredient.y - headerHeight,
+          sourceWidth: sourceIngredient.width,
+          sourceHeight: sourceIngredient.height,
+          destX: destineIngredient.x,
+          destY:
+            destineIngredient.y -
+            (headerHeight + destineIngredient.height + 6) -
+            ingredientSelected.height / 2.8,
+          destWidth: destineIngredient.width * 1.2,
+          destHeight: destineIngredient.height,
+        });
+      }
     }
   }, [ingredientId]);
 
@@ -193,6 +210,43 @@ export default function OrderManually() {
     }
   }, [openMeasurements]);
 
+  useEffect(() => {
+    if (Object.entries(ingredientSelected).length !== 0) {
+      if (ingredients.length === 0) {
+        setIngredients([
+          ...ingredients,
+          {
+            width: ingredientSelected.width,
+            height: ingredientSelected.height,
+            top: ingredientSelected.top,
+            left: ingredientSelected.left,
+            id: ingredientSelected.id,
+            zIndex: 6,
+          },
+        ]);
+      } else {
+        setIngredients([
+          ...ingredients,
+          {
+            width: ingredientSelected.width,
+            height: ingredientSelected.height,
+            top:
+              ingredients[
+                ingredients.indexOf(ingredients[ingredients.length - 1])
+              ].top -
+              ingredientSelected.height / 2.8,
+            left: ingredientSelected.left,
+            id: ingredientSelected.id,
+            zIndex:
+              ingredients[
+                ingredients.indexOf(ingredients[ingredients.length - 1])
+              ].zIndex + 1,
+          },
+        ]);
+      }
+    }
+  }, [ingredientSelected]);
+
   const checkScroll = ({ layoutMeasurement, contentOffset, contentSize }) => {
     if (contentOffset.x <= 20) {
       setStart(true);
@@ -204,6 +258,26 @@ export default function OrderManually() {
       setEnd(true);
     }
   };
+
+  const SelectedCheckBoxIngredients = () => {
+    return (
+      <CheckBoxIngredients
+        ingredients={data.ingredients}
+        response={({ sourceIngredientDimensions, ingredientId }) => {
+          if (ingredients.length < 2) {
+            setSourceIngredient(sourceIngredientDimensions);
+            setIngredientId(ingredientId);
+          }
+          console.log('test');
+        }}
+      />
+    );
+  };
+
+  const memorizedCheckBoxIngredients = useMemo(
+    () => SelectedCheckBoxIngredients(),
+    [ingredientSelected]
+  );
 
   return (
     <Block color="white">
@@ -275,31 +349,33 @@ export default function OrderManually() {
           {'  '}R$
         </Text>
       </Block>
-      <CheckBoxIngredients
-        ingredients={data.ingredients}
-        response={({ sourceIngredientDimensions, ingredientId }) => {
-          setSourceIngredient(sourceIngredientDimensions);
-          setIngredientId(ingredientId);
-        }}
-      />
-      {Object.entries(ingredientSelected).length !== 0 && (
-        <Photo
-          width={ingredientSelected.width}
-          height={ingredientSelected.height}
-          animated
-          absolute
-          image={data.findKey(ingredientSelected.id)[0].image}
-          style={{
-            zIndex: 8,
-            top: ingredientSelected.top,
-            left: ingredientSelected.left,
-            opacity: selectedProgress.interpolate({
-              inputRange: [0, 0.99, 0.995],
-              outputRange: [0, 0, 1],
-            }),
-          }}
-        />
-      )}
+      {memorizedCheckBoxIngredients}
+      {ingredients.length !== 0 &&
+        ingredients.map((item) => {
+          return (
+            <Photo
+              resizeMode="contain"
+              width={item.width}
+              height={item.height}
+              animated
+              absolute
+              image={data.findKey(item.id)[0].image}
+              style={{
+                alignSelf: 'center',
+                zIndex: item.zIndex,
+                top: item.top,
+                left: item.left,
+                opacity:
+                  ingredientSelected.id === item.id
+                    ? selectedProgress.interpolate({
+                        inputRange: [0, 0.99, 0.995],
+                        outputRange: [0, 0, 1],
+                      })
+                    : 1,
+              }}
+            />
+          );
+        })}
       {Object.entries(openMeasurements).length !== 0 && !animationComplete && (
         <Photo
           style={{
