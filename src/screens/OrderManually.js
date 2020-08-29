@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { FlatList, Dimensions, Animated } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/stack';
 import Toast from 'react-native-tiny-toast';
-import { Block, Text, Photo } from '../elements';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { Block, Text, Photo, Button } from '../elements';
 import { theme } from '../constants';
 import { data } from '../utils';
 import { CheckBoxBurger, Burger, MessageBurgerToast } from '../components';
@@ -269,8 +270,8 @@ export default function OrderManually() {
   }, [ingredientSelected]);
 
   useEffect(() => {
-    if (ingredients.length > 2) {
-      MessageBurgerToast('mounted burger, drag to cart!');
+    if (ingredients.length > 1) {
+      MessageBurgerToast('assembled hamburger, add to cart!');
     }
   }, [ingredients]);
 
@@ -291,7 +292,7 @@ export default function OrderManually() {
       <CheckBoxIngredients
         ingredients={data.ingredients}
         response={({ sourceIngredientDimensions, ingredientId }) => {
-          if (ingredients.length < 2) {
+          if (ingredients.length < 1) {
             setSourceIngredient(sourceIngredientDimensions);
             setIngredientId(ingredientId);
           }
@@ -308,10 +309,19 @@ export default function OrderManually() {
   return (
     <Block color="white">
       <Block flex={false} padding={[theme.sizes.padding, theme.sizes.padding]}>
-        <Block flex={false}>
+        <Block row flex={false}>
           <Text bold secondary h3>
             Order Manually
           </Text>
+          <Block row bottom>
+            <Button style>
+              <FontAwesome5
+                name="cart-arrow-down"
+                size={20}
+                color={theme.colors.secondary}
+              />
+            </Button>
+          </Block>
         </Block>
         <Block row flex={false} padding={[theme.sizes.padding, 0]}>
           <Block
