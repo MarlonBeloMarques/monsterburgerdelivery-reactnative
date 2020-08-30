@@ -25,7 +25,7 @@ Monster burger delivery is an application where you can assemble your hamburger 
 
 | Project | Preview | Screens | Estimation | Status |
 | ------ | :------: | :------: | :------: | :------: |
-| [Monster Burger Delivery](https://www.figma.com/file/azJo8X0abZMRPWvh4MfczM/interfacetemplates-monsterburger-delivery?node-id=0%3A1) | <img src="./readme/interfacetemplates-monsterburger-delivery.png" width="120" /> | 3 | ~1 week | :white_check_mark: |
+| [Monster Burger Delivery](https://www.figma.com/file/azJo8X0abZMRPWvh4MfczM/interfacetemplates-monsterburger-delivery?node-id=0%3A1) | <img src="./readme/interfacetemplates-monsterburger-delivery.png" width="120" /> | 7 | ~1 week | :white_check_mark: |
 
 ---
 
