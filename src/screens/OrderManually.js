@@ -94,7 +94,7 @@ export default function OrderManually({ navigation }) {
   useEffect(() => {
     if (start) {
       Animated.spring(leftContent, {
-        toValue: Dimensions.get('window').width / 2 - 100,
+        toValue: Dimensions.get('window').width / 2 - 90,
         duration: 150,
         useNativeDriver: false,
       }).start();
@@ -108,7 +108,7 @@ export default function OrderManually({ navigation }) {
 
     if (end) {
       Animated.spring(rightContent, {
-        toValue: -(Dimensions.get('window').width / 3.5),
+        toValue: -(Dimensions.get('window').width / 3.9),
         duration: 150,
         useNativeDriver: false,
       }).start();
