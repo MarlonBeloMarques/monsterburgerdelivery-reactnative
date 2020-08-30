@@ -2,10 +2,16 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { FlatList, Dimensions, Animated } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { Block, Text, Photo, Button } from '../elements';
+import { State } from 'react-native-gesture-handler';
+import { Block, Text, Photo } from '../elements';
 import { theme } from '../constants';
 import { data } from '../utils';
-import { CheckBoxBurger, Burger, MessageBurgerToast } from '../components';
+import {
+  CheckBoxBurger,
+  Burger,
+  MessageBurgerToast,
+  DragAddToCart,
+} from '../components';
 import CheckBoxIngredients from '../components/CheckBoxIngredients';
 
 const maxWidth = Dimensions.get('window').width;
@@ -49,6 +55,19 @@ export default function OrderManually() {
   const [sizeBurger, setSizeBurger] = useState(null);
   const [mountedBurger, setMountedBurger] = useState(false);
 
+  const translateX = new Animated.Value(0);
+
+  const animatedEvent = Animated.event(
+    [
+      {
+        nativeEvent: {
+          translationX: translateX,
+        },
+      },
+    ],
+    { useNativeDriver: true }
+  );
+
   const scrollToIndex = (item, index) => {
     flatListRef.current.scrollToIndex({
       animated: true,
@@ -61,8 +80,8 @@ export default function OrderManually() {
       bottomBurger.setValue(0);
       widthBurger.setValue(100);
       setIngredients([]);
+      setMountedBurger(false);
     }
-
     setIngredientSelected({});
     selectedProgress.setValue(0);
     setIndexToAnimated(index);
@@ -309,7 +328,26 @@ export default function OrderManually() {
     }
   };
 
-  console.log(myBurgers);
+  const onHandlerStateChanged = (event) => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      const { translationX } = event.nativeEvent;
+
+      if (translationX >= maxWidth - 160) {
+        translateX.setOffset(0);
+        translateX.setValue(0);
+        addBurger();
+      }
+
+      Animated.timing(translateX, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }).start(() => {
+        translateX.setOffset(0);
+        translateX.setValue(0);
+      });
+    }
+  };
 
   return (
     <Block color="white">
@@ -319,28 +357,26 @@ export default function OrderManually() {
             Order Manually
           </Text>
           <Block bottom row>
-            <Button style onPress={() => addBurger()}>
-              <FontAwesome5
-                name="cart-arrow-down"
-                size={20}
-                color={theme.colors.secondary}
-              />
-              <Block
-                style={{ alignSelf: 'flex-end', top: 12, right: -6 }}
-                center
-                middle
-                absolute
-                flex={false}
-                width={18}
-                height={18}
-                color={theme.colors.accent}
-                card
-              >
-                <Text caption bold white>
-                  {myBurgers.length}
-                </Text>
-              </Block>
-            </Button>
+            <FontAwesome5
+              name="cart-arrow-down"
+              size={20}
+              color={theme.colors.secondary}
+            />
+            <Block
+              style={{ alignSelf: 'flex-end', top: 12, right: -6 }}
+              center
+              middle
+              absolute
+              flex={false}
+              width={18}
+              height={18}
+              color={theme.colors.accent}
+              card
+            >
+              <Text caption bold white>
+                {myBurgers.length}
+              </Text>
+            </Block>
           </Block>
         </Block>
         <Block row flex={false} padding={[theme.sizes.padding, 0]}>
@@ -420,7 +456,15 @@ export default function OrderManually() {
           {'  '}R$
         </Text>
       </Block>
-      {memorizedCheckBoxIngredients}
+      {!mountedBurger && memorizedCheckBoxIngredients}
+      {mountedBurger && (
+        <DragAddToCart
+          onHandlerStateChanged={onHandlerStateChanged}
+          animatedEvent={animatedEvent}
+          translateX={translateX}
+          maxWidth={maxWidth}
+        />
+      )}
       {ingredients.length !== 0 &&
         ingredients.map((item) => {
           return (
