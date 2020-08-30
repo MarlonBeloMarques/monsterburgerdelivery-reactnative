@@ -4,6 +4,7 @@ import Burger from './Burger';
 import MessageBurgerToast from './MessageBurgerToast';
 import DragAddToCart from './DragAddToCart';
 import HistoricBurger from './HistoricBurger';
+import MyOrderBurger from './MyOrderBurger';
 
 export {
   Title,
@@ -12,4 +13,5 @@ export {
   MessageBurgerToast,
   DragAddToCart,
   HistoricBurger,
+  MyOrderBurger,
 };

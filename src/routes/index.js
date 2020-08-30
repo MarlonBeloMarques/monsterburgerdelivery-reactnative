@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { Platform } from 'react-native';
 import AuthStack from './AuthStack';
+import MyOrder from '../screens/MyOrder';
 import NavigationTabBottom from './NavigationTabBottom';
 import { Photo } from '../elements';
 
@@ -26,6 +27,34 @@ export default function Navigator() {
         <Stack.Screen
           name="Navigation"
           component={NavigationTabBottom}
+          options={{
+            headerBackImage: () => (
+              <Photo
+                image={back}
+                style={{ width: 26, height: 26, marginRight: 5 }}
+              />
+            ),
+            headerStyle: {
+              shadowColor: 'transparent',
+              elevation: 0,
+            },
+            headerBackTitleVisible: null,
+            title: null,
+            headerLeftContainerStyle: {
+              alignItems: 'center',
+              marginLeft: Platform.OS === 'ios' ? theme.sizes.base : 0,
+              padding: theme.sizes.base,
+            },
+            headerRightContainerStyle: {
+              alignItems: 'center',
+              marginLeft: Platform.OS === 'ios' ? theme.sizes.base : 0,
+              padding: theme.sizes.base,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="MyOrder"
+          component={MyOrder}
           options={{
             headerBackImage: () => (
               <Photo
